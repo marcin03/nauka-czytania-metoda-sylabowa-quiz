@@ -26,7 +26,7 @@ const MainMenu = () => {
         <h2 style={{ fontSize: '1.875rem', fontWeight: 'semibold', marginBottom: '1rem', color: '#2563eb' }}>
           Wybierz spółgłoski:
         </h2>
-        <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem' }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '0.5rem', maxWidth: '90%', margin: '0 auto', padding: '1rem' }}>
           {CONSONANTS.map((consonant) => (
             <button
               key={consonant}
