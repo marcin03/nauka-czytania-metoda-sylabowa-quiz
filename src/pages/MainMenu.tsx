@@ -22,6 +22,28 @@ const MainMenu = () => {
       <h1 style={{ fontSize: '3.75rem', fontWeight: 'bold', color: '#facc15', marginBottom: '2rem' }}>
         Nauka Czytania
       </h1>
+      {/* New World Selection Button */}
+      <div style={{ marginBottom: '2rem' }}>
+        <Link to="/worlds">
+          <button
+            style={{
+              padding: '1rem 2rem',
+              backgroundColor: '#60a5fa', // A different color for distinction
+              color: '#ffffff',
+              fontWeight: 'bold',
+              borderRadius: '0.5rem',
+              fontSize: '1.875rem',
+              boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+              transition: 'background-color 0.2s',
+              border: 'none',
+              cursor: 'pointer',
+            }}
+          >
+            Wybierz Świat
+          </button>
+        </Link>
+      </div>
+
       <div style={{ marginBottom: '2rem' }}>
         <h2 style={{ fontSize: '1.875rem', fontWeight: 'semibold', marginBottom: '1rem', color: '#2563eb' }}>
           Wybierz spółgłoski:

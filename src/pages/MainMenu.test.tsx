@@ -13,7 +13,7 @@ describe('MainMenu', () => {
         settings: {
           syllablesPerSession: 5,
           learningModeDelay: 3,
-          selectedVowels: ['A', 'E', 'I', 'O', 'U', 'Y'],
+          selectedConsonants: [], // Changed from selectedVowels
         },
         currentSyllables: [],
         currentSyllableIndex: 0,
@@ -30,29 +30,29 @@ describe('MainMenu', () => {
       </Router>
     );
     expect(screen.getByText('Nauka Czytania')).toBeInTheDocument();
-    expect(screen.getByText('Wybierz samogłoski:')).toBeInTheDocument();
+    expect(screen.getByText('Wybierz spółgłoski:')).toBeInTheDocument(); // Changed text
     expect(screen.getByText('Nauka')).toBeInTheDocument();
     expect(screen.getByText('Quiz')).toBeInTheDocument();
   });
 
-  it('toggles vowel selection', () => {
+  it('toggles consonant selection', () => { // Changed description
     render(
       <Router>
         <MainMenu />
       </Router>
     );
 
-    const aVowelButton = screen.getByText('A');
-    expect(aVowelButton).toHaveClass('bg-green-400'); // 'A' is selected by default
+    const bConsonantButton = screen.getByText('B'); // Using 'B' consonant
+    expect(useGameStore.getState().settings.selectedConsonants).not.toContain('B'); // 'B' is not selected by default
 
-    fireEvent.click(aVowelButton);
-    expect(aVowelButton).not.toHaveClass('bg-green-400'); // 'A' should be deselected
+    fireEvent.click(bConsonantButton);
+    expect(useGameStore.getState().settings.selectedConsonants).toContain('B'); // 'B' should be selected
 
-    fireEvent.click(aVowelButton);
-    expect(aVowelButton).toHaveClass('bg-green-400'); // 'A' should be re-selected
+    fireEvent.click(bConsonantButton);
+    expect(useGameStore.getState().settings.selectedConsonants).not.toContain('B'); // 'B' should be deselected
   });
 
-  it('disables game mode buttons if no vowels are selected', () => {
+  it('disables game mode buttons if no consonants are selected', () => { // Changed description
     render(
       <Router>
         <MainMenu />
@@ -60,15 +60,15 @@ describe('MainMenu', () => {
     );
 
     act(() => {
-      // Deselect all vowels
-      useGameStore.getState().setSettings({ selectedVowels: [] });
+      // Deselect all consonants (default state for selectedConsonants is now [])
+      useGameStore.getState().setSettings({ selectedConsonants: [] });
     });
     
     expect(screen.getByText('Nauka')).toBeDisabled();
     expect(screen.getByText('Quiz')).toBeDisabled();
   });
 
-  it('enables game mode buttons if vowels are selected', () => {
+  it('enables game mode buttons if consonants are selected', () => { // Changed description
     render(
       <Router>
         <MainMenu />
@@ -76,8 +76,8 @@ describe('MainMenu', () => {
     );
     
     act(() => {
-      // Ensure at least one vowel is selected
-      useGameStore.getState().setSettings({ selectedVowels: ['A'] });
+      // Ensure at least one consonant is selected
+      useGameStore.getState().setSettings({ selectedConsonants: ['B'] });
     });
     
     expect(screen.getByText('Nauka')).not.toBeDisabled();

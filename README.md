@@ -103,36 +103,67 @@ To extend the game with more Polish syllables:
 
 3.  **Run the application:** The new syllables will be available in the game immediately.
 
-## Customizing Styling
+## Gamification System (Worlds & Rewards)
 
-This application currently uses inline styles for basic layout. To achieve a child-friendly, colorful, and engaging design, you will need to add custom CSS.
+This application incorporates a gamification system designed to motivate children through thematic worlds and visual rewards.
 
-1.  **Create `src/App.css` (or similar):**
-    -   You can create a CSS file (e.g., `src/App.css`) and import it into `src/App.tsx`.
-    -   Define your styles using standard CSS rules, targeting elements by their HTML tags, custom class names, or IDs.
+### How Worlds Work:
 
-2.  **Apply Class Names:**
-    -   Modify the components (`App.tsx`, `MainMenu.tsx`, etc.) to add `className` attributes to your HTML elements (e.g., `<div className="main-container">`).
-    -   Define the corresponding CSS rules in your CSS file.
+-   **Thematic Progression:** Instead of traditional levels, children progress through themed "worlds" (e.g., Las, Kosmos, Zamek). Each world contains a specific set of syllables to learn and a required number of sessions to complete.
+-   **Unlocking Worlds:** Children start with the first world unlocked. Completing all required sessions in a world unlocks the next world in the sequence. There is no concept of "losing"; progress is always forward.
+-   **World Selection:** From the main menu, navigate to "Wybierz Świat" (Select World) to see all available worlds. Unlocked worlds can be chosen to start a learning or quiz session.
 
-## Project Structure
+### Session Completion & Rewards:
 
-```
-├── public/                 # Public assets
-│   └── audio/              # [User-provided] Audio files for syllables
-├── src/
-│   ├── components/         # Reusable React components
-│   ├── data/               # Syllable data (now using CONSONANTS)
-│   ├── hooks/              # Custom React hooks (e.g., useAudioPlayer)
-│   ├── lib/                # Utility functions or helper modules
-│   ├── pages/              # Main application pages (MainMenu, LearningMode, QuizMode, Settings)
-│   ├── store/              # Zustand store for global state
-│   ├── types/              # TypeScript type definitions (now using 'consonant')
-│   ├── App.tsx             # Main application component with routing
-│   ├── index.css           # Global styles (currently empty, ready for custom CSS)
-│   ├── main.tsx            # Application entry point
-│   └── tests/              # Unit tests (Vitest + React Testing Library)
-├── tsconfig.json           # TypeScript configuration
-├── vite.config.js           # Vite build and development configuration (including Vitest setup)
-└── package.json            # Project dependencies and scripts
-```
+-   **Session Rewards:** After completing a learning or quiz session (a fixed number of syllables within a world), a celebration screen appears. Children receive a generic reward (e.g., a "Naklejka Gwiazdka" / Star Sticker) for every completed session.
+-   **World Completion Rewards:** Upon completing all required sessions within a world, a special unique reward for that world is unlocked (e.g., "Leśna Odznaka" / Forest Badge).
+-   **My Rewards View:** You can view all collected rewards by clicking "Zobacz Moje Nagrody" (See My Rewards) from the world selection screen.
+
+### Adding New Worlds or Rewards:
+
+The data for worlds and rewards is centrally managed in `src/data/gamificationData.ts`.
+
+#### To Add a New World:
+
+1.  **Define Syllables:** Ensure you have enough syllables defined in `src/data/syllables.ts` with unique `id`s for your new world.
+2.  **Prepare Visual Assets:** Create an image for your world (e.g., `my_new_world.svg` or `.png`) and place it in the `public/images/worlds/` directory.
+3.  **Define World Reward:** Decide what reward children will receive for completing this new world. You might need to add a new reward first (see below).
+4.  **Update `src/data/gamificationData.ts`:**
+    -   Add a new `World` object to the `WORLDS` array.
+    -   Assign a unique `id`, a `name`, `description`, and the `image` path.
+    -   Crucially, provide an array of `syllableIds` that belong to this world. These IDs must correspond to `id`s in `ALL_SYLLABLES` from `src/data/syllables.ts`.
+    -   Specify `requiredSessionsToComplete` (e.g., 3).
+    -   Set the `rewardId` (from your `REWARDS` list).
+    -   If this world leads to another, set `nextWorldId` to the ID of the subsequent world.
+
+    Example:
+    ```typescript
+    export const WORLDS: World[] = [
+      // ... existing worlds
+      {
+        id: 'ocean',
+        name: 'Ocean',
+        description: 'Zanurkuj w oceanie sylab!',
+        image: '/images/worlds/ocean.svg',
+        syllableIds: [31, 32, 33, 34, 35, 36, 49, 50, 51, 52], // Example syllable IDs
+        requiredSessionsToComplete: 4,
+        rewardId: 'ocean-shell',
+        // nextWorldId: 'another-world-id' // Optional
+      },
+    ];
+    ```
+
+#### To Add a New Reward:
+
+1.  **Prepare Visual Assets:** Create an image for your reward (e.g., `my_new_reward.svg` or `.png`) and place it in the `public/images/rewards/` directory.
+2.  **Update `src/data/gamificationData.ts`:**
+    -   Add a new `Reward` object to the `REWARDS` array.
+    -   Assign a unique `id`, a `name`, and the `image` path.
+
+    Example:
+    ```typescript
+    export const REWARDS: Reward[] = [
+      // ... existing rewards
+      { id: 'ocean-shell', name: 'Morska Muszelka', image: '/images/rewards/ocean-shell.svg' },
+    ];
+    ```

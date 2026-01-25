@@ -1,46 +1,89 @@
-import { useEffect, useState } from 'react';
-import useGameStore from '../store/useGameStore';
+import { useEffect, useState, useCallback } from 'react';
+import useGameStore from '../store/useGameStore'; // Still needed for gameMode, increaseScore
 import { useNavigate } from 'react-router-dom';
 import { useAudioPlayer } from '../hooks/useAudioPlayer';
-import type { Syllable } from '../types';
-import { ALL_SYLLABLES } from '../data/syllables';
+import type { Syllable, SessionCompletionDetails } from '../types';
+import { ALL_SYLLABLES } from '../data/syllables'; // Import all syllables
+import { useGamificationStore } from '../store/useGamificationStore'; // Import gamification store
 
 const QuizMode = () => {
   const navigate = useNavigate();
-  const { currentSyllables, currentSyllableIndex, nextSyllable, gameMode, increaseScore, resetGame } =
-    useGameStore();
+  const { gameMode, increaseScore } = useGameStore(); // Keep gameMode and increaseScore from useGameStore
   const { playAudio, isPlaying } = useAudioPlayer();
+
+  const {
+    currentWorldId,
+    sessionSyllableCount,
+    getWorldById,
+    completeSession,
+    completedSessionsCount,
+  } = useGamificationStore();
+
+  const [currentSyllableIndex, setCurrentSyllableIndex] = useState(0);
   const [options, setOptions] = useState<Syllable[]>([]);
   const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null);
   const [selectedAnswer, setSelectedAnswer] = useState<Syllable | null>(null);
+  const [isSessionComplete, setIsSessionComplete] = useState(false);
+  const [sessionCompletionDetails, setSessionCompletionDetails] = useState<SessionCompletionDetails | null>(null);
 
-  const currentSyllable = currentSyllables[currentSyllableIndex];
+
+  const currentWorld = getWorldById(currentWorldId);
+
+  // Filter syllables for the current world
+  const worldSyllables: Syllable[] = currentWorld
+    ? ALL_SYLLABLES.filter((s) => currentWorld.syllableIds.includes(s.id))
+    : [];
+
+  const actualSyllablesInSession = Math.min(worldSyllables.length, sessionSyllableCount);
+  const currentSyllable = worldSyllables[currentSyllableIndex];
+
+
+  const generateOptions = useCallback((correctSyllable: Syllable) => {
+    // Generate incorrect options from ALL_SYLLABLES, but make sure they are not the correct answer
+    // and ideally have a different consonant to avoid confusion for this quiz mode.
+    // TODO: For progression, introduce similar-consonant incorrect options.
+    const incorrectSyllables = ALL_SYLLABLES.filter(
+      (s) => s.id !== correctSyllable.id // Must not be the correct syllable
+    );
+
+    const shuffledIncorrect = incorrectSyllables.sort(() => 0.5 - Math.random());
+    const selectedOptions = shuffledIncorrect.slice(0, 2); // Get 2 incorrect options
+
+    const allOptions = [...selectedOptions, correctSyllable];
+    setOptions(allOptions.sort(() => 0.5 - Math.random())); // Shuffle all options
+  }, []);
 
   useEffect(() => {
-    if (gameMode !== 'quiz' || currentSyllables.length === 0) {
-      navigate('/');
+    if (gameMode !== 'quiz' || !currentWorld || actualSyllablesInSession === 0) {
+      navigate('/'); // Redirect if not in quiz mode or no current world/syllables
+      return;
+    }
+
+    if (isSessionComplete) {
+      navigate('/session-complete', { state: { details: sessionCompletionDetails } });
       return;
     }
 
     if (currentSyllable) {
-      const generateOptions = () => {
-        const incorrectSyllables = ALL_SYLLABLES.filter(
-          (s) => s.text !== currentSyllable.text && s.consonant !== currentSyllable.consonant
-        );
-        const shuffledIncorrect = incorrectSyllables.sort(() => 0.5 - Math.random());
-        const selectedOptions = shuffledIncorrect.slice(0, 2); // Get 2 incorrect options
-        
-        const allOptions = [...selectedOptions, currentSyllable];
-        setOptions(allOptions.sort(() => 0.5 - Math.random())); // Shuffle all options
-      };
-      generateOptions();
+      generateOptions(currentSyllable);
       setFeedback(null);
       setSelectedAnswer(null);
       if (currentSyllable.audioUrl) {
         playAudio(currentSyllable.audioUrl);
       }
     }
-  }, [currentSyllable, currentSyllables, gameMode, navigate, playAudio]);
+  }, [
+    currentSyllable,
+    currentSyllableIndex,
+    gameMode,
+    navigate,
+    playAudio,
+    generateOptions,
+    currentWorld,
+    actualSyllablesInSession,
+    isSessionComplete,
+    sessionCompletionDetails,
+  ]);
 
   const handleAnswer = (selectedSyllable: Syllable) => {
     if (feedback) return; // Prevent multiple answers
@@ -49,22 +92,24 @@ const QuizMode = () => {
 
     if (selectedSyllable.id === currentSyllable.id) {
       setFeedback('correct');
-      increaseScore();
+      increaseScore(); // Keep increasing score from useGameStore
     } else {
       setFeedback('incorrect');
     }
 
     setTimeout(() => {
-      if (currentSyllableIndex < currentSyllables.length - 1) {
-        nextSyllable();
+      if (currentSyllableIndex < actualSyllablesInSession - 1) {
+        setCurrentSyllableIndex((prev) => prev + 1);
       } else {
-        resetGame();
-        navigate('/'); // End of session, go to main menu
+        // Session completed
+        const details = completeSession(currentWorldId);
+        setSessionCompletionDetails(details);
+        setIsSessionComplete(true);
       }
     }, 1500); // Show feedback for 1.5 seconds
   };
 
-  if (!currentSyllable) {
+  if (!currentSyllable || !currentWorld) {
     return (
       <div style={{ textAlign: 'center', fontSize: '2rem', fontWeight: 'bold', color: '#4a5568' }}>
         Ładowanie...
@@ -75,14 +120,17 @@ const QuizMode = () => {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 'calc(100vh - 4rem)', padding: '1rem' }}>
       <p style={{ fontSize: '1.25rem', color: '#4a5568', marginBottom: '1rem' }}>
-        Pytanie: {currentSyllableIndex + 1} / {currentSyllables.length}
+        Świat: {currentWorld.name} | Sesja {completedSessionsCount[currentWorldId] || 0 + 1} / {currentWorld.requiredSessionsToComplete}
+      </p>
+      <p style={{ fontSize: '1.25rem', color: '#4a5568', marginBottom: '1rem' }}>
+        Pytanie: {currentSyllableIndex + 1} / {actualSyllablesInSession}
       </p>
       <div style={{ width: '16rem', height: '16rem', backgroundColor: '#ffffff', borderRadius: '0.75rem', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '2rem' }}>
         <span style={{ fontSize: '3.125rem', color: '#a0aec0' /* Equivalent to gray-400 */ }}>Słuchaj...</span>
       </div>
       <button
         onClick={() => currentSyllable.audioUrl && playAudio(currentSyllable.audioUrl)}
-        disabled={isPlaying || !currentSyllable.audioUrl}
+        disabled={isPlaying || !currentSyllable.audioUrl || !!feedback}
         style={{
           padding: '1rem 2rem',
           borderRadius: '9999px',
@@ -92,7 +140,7 @@ const QuizMode = () => {
           transition: 'background-color 0.2s',
           border: 'none',
           cursor: 'pointer',
-          backgroundColor: isPlaying || !currentSyllable.audioUrl ? '#a0aec0' /* Equivalent to gray-400 */ : '#10b981' /* Equivalent to green-500 */,
+          backgroundColor: isPlaying || !currentSyllable.audioUrl || !!feedback ? '#a0aec0' /* Equivalent to gray-400 */ : '#10b981' /* Equivalent to green-500 */,
         }}
       >
         Posłuchaj

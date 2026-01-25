@@ -11,7 +11,7 @@ describe('useGameStore', () => {
         settings: {
           syllablesPerSession: 5,
           learningModeDelay: 3,
-          selectedVowels: ['A', 'E', 'I', 'O', 'U', 'Y'],
+          selectedConsonants: [], // Changed from selectedVowels
         },
         currentSyllables: [],
         currentSyllableIndex: 0,
@@ -26,7 +26,7 @@ describe('useGameStore', () => {
     expect(result.current.settings).toEqual({
       syllablesPerSession: 5,
       learningModeDelay: 3,
-      selectedVowels: ['A', 'E', 'I', 'O', 'U', 'Y'],
+      selectedConsonants: [], // Changed from selectedVowels
     });
     expect(result.current.gameMode).toBeNull();
     expect(result.current.score).toBe(0);
@@ -44,13 +44,13 @@ describe('useGameStore', () => {
   it('should start a learning game', () => {
     const { result } = renderHook(() => useGameStore());
     act(() => {
-      result.current.setSettings({ selectedVowels: ['A'] }); // Select only 'A' vowels
+      result.current.setSettings({ selectedConsonants: ['B'] }); // Changed from selectedVowels
       result.current.startGame('learning');
     });
 
     expect(result.current.gameMode).toBe('learning');
     expect(result.current.currentSyllables.length).toBe(5); // Default syllables per session
-    expect(result.current.currentSyllables.every(s => s.vowel === 'A')).toBe(true);
+    expect(result.current.currentSyllables.every(s => s.consonant === 'B')).toBe(true); // Changed from s.vowel === 'A'
     expect(result.current.currentSyllableIndex).toBe(0);
     expect(result.current.score).toBe(0);
   });
@@ -58,6 +58,7 @@ describe('useGameStore', () => {
   it('should advance to the next syllable', () => {
     const { result } = renderHook(() => useGameStore());
     act(() => {
+      result.current.setSettings({ selectedConsonants: ['B'] }); // Added this line to avoid errors
       result.current.startGame('learning');
     });
     expect(result.current.currentSyllableIndex).toBe(0);
@@ -71,7 +72,7 @@ describe('useGameStore', () => {
   it('should end the game when all syllables are played', () => {
     const { result } = renderHook(() => useGameStore());
     act(() => {
-      result.current.setSettings({ syllablesPerSession: 1 }); // Only one syllable for quick test
+      result.current.setSettings({ syllablesPerSession: 1, selectedConsonants: ['B'] }); // Added selectedConsonants
       result.current.startGame('learning');
     });
     expect(result.current.gameMode).toBe('learning');
@@ -85,6 +86,7 @@ describe('useGameStore', () => {
   it('should increase score', () => {
     const { result } = renderHook(() => useGameStore());
     act(() => {
+      result.current.setSettings({ selectedConsonants: ['B'] }); // Added selectedConsonants
       result.current.startGame('quiz');
     });
     expect(result.current.score).toBe(0);
@@ -98,7 +100,7 @@ describe('useGameStore', () => {
   it('should reset the game', () => {
     const { result } = renderHook(() => useGameStore());
     act(() => {
-      result.current.setSettings({ syllablesPerSession: 10 });
+      result.current.setSettings({ syllablesPerSession: 10, selectedConsonants: ['B'] }); // Added selectedConsonants
       result.current.startGame('quiz');
       result.current.increaseScore();
       result.current.nextSyllable();
@@ -118,15 +120,15 @@ describe('useGameStore', () => {
     expect(result.current.currentSyllables).toEqual([]);
   });
 
-  it('should filter syllables based on selected vowels', () => {
+  it('should filter syllables based on selected consonants', () => { // Changed description
     const { result } = renderHook(() => useGameStore());
     act(() => {
-      result.current.setSettings({ selectedVowels: ['A', 'O'] });
+      result.current.setSettings({ selectedConsonants: ['B', 'C'] }); // Changed from selectedVowels
       result.current.startGame('learning');
     });
     
-    const allSelectedAreAorO = result.current.currentSyllables.every(s => s.vowel === 'A' || s.vowel === 'O');
-    expect(allSelectedAreAorO).toBe(true);
+    const allSelectedAreBorC = result.current.currentSyllables.every(s => s.consonant === 'B' || s.consonant === 'C'); // Changed filtering logic
+    expect(allSelectedAreBorC).toBe(true);
     expect(result.current.currentSyllables.length).toBe(5); // Still 5 syllables per session
   });
 });
