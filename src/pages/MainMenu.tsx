@@ -1,16 +1,16 @@
 import { Link } from 'react-router-dom';
 import useGameStore from '../store/useGameStore';
-import { VOWELS } from '../data/syllables';
+import { CONSONANTS } from '../data/syllables';
 
 const MainMenu = () => {
   const { settings, setSettings, startGame } = useGameStore();
 
-  const handleVowelToggle = (vowel: string) => {
-    const { selectedVowels } = settings;
-    const newSelectedVowels = selectedVowels.includes(vowel)
-      ? selectedVowels.filter((v) => v !== vowel)
-      : [...selectedVowels, vowel];
-    setSettings({ selectedVowels: newSelectedVowels });
+  const handleConsonantToggle = (consonant: string) => {
+    const { selectedConsonants } = settings;
+    const newSelectedConsonants = selectedConsonants.includes(consonant)
+      ? selectedConsonants.filter((c) => c !== consonant)
+      : [...selectedConsonants, consonant];
+    setSettings({ selectedConsonants: newSelectedConsonants });
   };
 
   const handleStartGame = (mode: 'learning' | 'quiz') => {
@@ -24,28 +24,28 @@ const MainMenu = () => {
       </h1>
       <div style={{ marginBottom: '2rem' }}>
         <h2 style={{ fontSize: '1.875rem', fontWeight: 'semibold', marginBottom: '1rem', color: '#2563eb' }}>
-          Wybierz samogłoski:
+          Wybierz spółgłoski:
         </h2>
         <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem' }}>
-          {VOWELS.map((vowel) => (
+          {CONSONANTS.map((consonant) => (
             <button
-              key={vowel}
-              onClick={() => handleVowelToggle(vowel)}
+              key={consonant}
+              onClick={() => handleConsonantToggle(consonant)}
               style={{
                 padding: '1rem 1.5rem',
                 borderRadius: '0.5rem',
                 fontSize: '1.5rem',
                 fontWeight: 'bold',
                 transition: 'transform 0.2s',
-                transform: settings.selectedVowels.includes(vowel) ? 'scale(1.1)' : 'scale(1)',
-                backgroundColor: settings.selectedVowels.includes(vowel) ? '#4ade80' : '#ffffff',
-                color: settings.selectedVowels.includes(vowel) ? '#ffffff' : '#4b5563',
-                boxShadow: settings.selectedVowels.includes(vowel) ? 'none' : '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+                transform: settings.selectedConsonants.includes(consonant) ? 'scale(1.1)' : 'scale(1)',
+                backgroundColor: settings.selectedConsonants.includes(consonant) ? '#4ade80' : '#ffffff',
+                color: settings.selectedConsonants.includes(consonant) ? '#ffffff' : '#4b5563',
+                boxShadow: settings.selectedConsonants.includes(consonant) ? 'none' : '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
                 border: 'none',
                 cursor: 'pointer',
               }}
             >
-              {vowel}
+              {consonant}
             </button>
           ))}
         </div>
@@ -66,7 +66,7 @@ const MainMenu = () => {
               border: 'none',
               cursor: 'pointer',
             }}
-            disabled={settings.selectedVowels.length === 0}
+            disabled={settings.selectedConsonants.length === 0}
           >
             Nauka
           </button>
@@ -86,7 +86,7 @@ const MainMenu = () => {
               border: 'none',
               cursor: 'pointer',
             }}
-            disabled={settings.selectedVowels.length === 0}
+            disabled={settings.selectedConsonants.length === 0}
           >
             Quiz
           </button>

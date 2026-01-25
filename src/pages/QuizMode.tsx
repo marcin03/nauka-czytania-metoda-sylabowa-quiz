@@ -25,7 +25,7 @@ const QuizMode = () => {
     if (currentSyllable) {
       const generateOptions = () => {
         const incorrectSyllables = ALL_SYLLABLES.filter(
-          (s) => s.text !== currentSyllable.text && s.vowel !== currentSyllable.vowel
+          (s) => s.text !== currentSyllable.text && s.consonant !== currentSyllable.consonant
         );
         const shuffledIncorrect = incorrectSyllables.sort(() => 0.5 - Math.random());
         const selectedOptions = shuffledIncorrect.slice(0, 2); // Get 2 incorrect options

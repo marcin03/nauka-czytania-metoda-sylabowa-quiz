@@ -4,7 +4,7 @@ This is a React + TypeScript + Vite application designed to help children (~5 ye
 
 ## Features:
 
--   **Main Menu:** Allows users to select specific vowels to practice, and navigate to different game modes or settings.
+-   **Main Menu:** Allows users to select specific consonants to practice, and navigate to different game modes or settings.
 -   **Learning Mode:** Displays and plays the audio of syllables using provided audio files, automatically advancing after a configurable delay or manually by pressing the space bar.
 -   **Quiz Mode:** Plays the audio of a syllable using provided audio files and presents three visual options for the child to choose from, providing immediate feedback.
 -   **Configurable Settings:** Adjust the number of syllables per session and the delay between syllables in learning mode.
@@ -43,9 +43,9 @@ npm run dev
 This will typically open the application in your browser at `http://localhost:5173/`.
 
 **Important: Audio Files are User-Provided!**
-This application is designed to work with audio files for syllables. Currently, placeholder `audioUrl` entries are present in `src/data/syllables.ts`, but no actual audio files are included.
+This application is designed to work with audio files for syllables. Placeholder `audioUrl` entries are present in `src/data/syllables.ts`, but no actual audio files are included.
 To enable audio playback:
-1.  **Create a directory:** Make a new directory `public/audio/` in your project root.
+1.  **Create a directory:** Make a new directory `public/audio/` in your project root (if it doesn't exist).
 2.  **Add audio files:** Place your `.mp3` (or other supported audio format) files for each syllable into this `public/audio/` directory. Ensure the file names are descriptive (e.g., `ba.mp3`, `ma.mp3`).
 3.  **Update `src/data/syllables.ts`:** For each syllable object, update the `audioUrl` property to point to the correct path of its corresponding audio file (e.g., `audioUrl: '/audio/ba.mp3'`).
 
@@ -74,7 +74,7 @@ From the main menu, click on the gear icon (⚙️) to access the settings panel
 -   **Number of Syllables per Session:** Adjust how many syllables are presented in a single learning or quiz session (default: 5, range: 2-20).
 -   **Learning Mode Delay:** Set the time (in seconds) the application waits before advancing to the next syllable in Learning Mode (default: 3s, range: 1-9s).
 
-You can also select which vowels to practice directly from the main menu.
+You can also select which consonants to practice directly from the main menu.
 
 ## Adding More Syllables
 
@@ -89,15 +89,15 @@ To extend the game with more Polish syllables:
     -   Add new `Syllable` objects to the `ALL_SYLLABLES` array. Each object should have:
         -   `id`: A unique number.
         -   `text`: The syllable text (e.g., 'MA').
-        -   `vowel`: The main vowel in the syllable (e.g., 'A'). This is used for filtering.
+        -   `consonant`: The initial consonant in the syllable (e.g., 'M'). This is used for filtering.
         -   `audioUrl` (optional): The path to your audio file, relative to the `public/` directory (e.g., `/audio/ma.mp3`).
 
     Example:
     ```typescript
     export const ALL_SYLLABLES: Syllable[] = [
       // ... existing syllables
-      { id: 101, text: 'LA', vowel: 'A', audioUrl: '/audio/la.mp3' }, // With audio
-      { id: 102, text: 'LO', vowel: 'O' }, // Without audio
+      { id: 101, text: 'LA', consonant: 'L', audioUrl: '/audio/la.mp3' }, // With audio
+      { id: 102, text: 'LO', consonant: 'L' }, // Without audio
     ];
     ```
 
@@ -122,12 +122,12 @@ This application currently uses inline styles for basic layout. To achieve a chi
 │   └── audio/              # [User-provided] Audio files for syllables
 ├── src/
 │   ├── components/         # Reusable React components
-│   ├── data/               # Syllable data
+│   ├── data/               # Syllable data (now using CONSONANTS)
 │   ├── hooks/              # Custom React hooks (e.g., useAudioPlayer)
 │   ├── lib/                # Utility functions or helper modules
 │   ├── pages/              # Main application pages (MainMenu, LearningMode, QuizMode, Settings)
 │   ├── store/              # Zustand store for global state
-│   ├── types/              # TypeScript type definitions
+│   ├── types/              # TypeScript type definitions (now using 'consonant')
 │   ├── App.tsx             # Main application component with routing
 │   ├── index.css           # Global styles (currently empty, ready for custom CSS)
 │   ├── main.tsx            # Application entry point

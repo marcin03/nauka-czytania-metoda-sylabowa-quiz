@@ -3,13 +3,13 @@ export interface Syllable {
   text: string;
 
   audioUrl?: string;
-  vowel: string;
+  consonant: string;
 }
 
 export interface GameSettings {
   syllablesPerSession: number;
   learningModeDelay: number;
-  selectedVowels: string[];
+  selectedConsonants: string[];
 }
 
 export type GameMode = 'learning' | 'quiz';

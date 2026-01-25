@@ -18,7 +18,7 @@ interface GameState {
 const defaultSettings: GameSettings = {
   syllablesPerSession: 5,
   learningModeDelay: 3,
-  selectedVowels: ['A', 'E', 'I', 'O', 'U', 'Y'],
+  selectedConsonants: ['B', 'C', 'D', 'F', 'G'], // Default selected consonants
 };
 
 const useGameStore = create<GameState>((set, get) => ({
@@ -32,9 +32,9 @@ const useGameStore = create<GameState>((set, get) => ({
     set((state) => ({ settings: { ...state.settings, ...newSettings } })),
 
   startGame: (gameMode) => {
-    const { syllablesPerSession, selectedVowels } = get().settings;
+    const { syllablesPerSession, selectedConsonants } = get().settings;
     const filteredSyllables = ALL_SYLLABLES.filter((s) =>
-      selectedVowels.includes(s.vowel)
+      selectedConsonants.includes(s.consonant)
     );
     
     // Simple shuffle and slice
