@@ -1,0 +1,43 @@
+/* src/styles/themes.css */
+
+/* Forest Theme (Default) */
+.theme-forest {
+  --bg-primary: #e0f2fe; /* light blue from original App.tsx */
+  --text-primary: #333;
+  --button-primary-bg: #f59e0b; /* yellow */
+  --button-primary-hover-bg: #d97706;
+  --button-secondary-bg: #3b82f6; /* blue */
+  --button-secondary-hover-bg: #2563eb;
+  --completion-screen-bg: #90caf9; /* light blue */
+  --completion-screen-text: white;
+  --guide-bubble-bg: white;
+  --guide-bubble-text: #333;
+}
+
+/* Space Theme */
+.theme-space {
+  --bg-primary: #1a202c; /* dark gray */
+  --text-primary: #e2e8f0; /* light gray */
+  --button-primary-bg: #805ad5; /* purple */
+  --button-primary-hover-bg: #6b46c1;
+  --button-secondary-bg: #3182ce; /* blue */
+  --button-secondary-hover-bg: #2b6cb0;
+  --completion-screen-bg: #2d3748; /* darker gray */
+  --completion-screen-text: #e2e8f0;
+  --guide-bubble-bg: #4a5568; /* gray */
+  --guide-bubble-text: white;
+}
+
+/* Castle Theme */
+.theme-castle {
+  --bg-primary: #fffaf0; /* floral white */
+  --text-primary: #4a5568; /* gray */
+  --button-primary-bg: #d53f8c; /* pink */
+  --button-primary-hover-bg: #b83280;
+  --button-secondary-bg: #805ad5; /* purple */
+  --button-secondary-hover-bg: #6b46c1;
+  --completion-screen-bg: #fbd38d; /* yellow-orange */
+  --completion-screen-text: #2d3748;
+  --guide-bubble-bg: #fefcbf; /* light yellow */
+  --guide-bubble-text: #4a5568;
+}

@@ -6,19 +6,20 @@ import Settings from './pages/Settings';
 import WorldSelection from './pages/WorldSelection';
 import RewardsView from './pages/RewardsView';
 import SessionCompletionScreen from './components/SessionCompletionScreen'; // Import SessionCompletionScreen
-import useGameStore from './store/useGameStore';
 import { SessionCompletionDetails } from './types'; // Import SessionCompletionDetails type
+import { useThemeStore } from './store/useThemeStore';
+import './App.css';
 
 function App() {
-  const gameMode = useGameStore((state) => state.gameMode);
-  const location = useLocation(); // Use useLocation hook
+  const location = useLocation();
+  const theme = useThemeStore((state) => state.theme);
 
   // Extract details from location state for SessionCompletionScreen
   const sessionCompletionDetails = location.state?.details as SessionCompletionDetails | undefined;
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#e0f2fe', color: '#333', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
-      <nav style={{ position: 'absolute', top: '1rem', right: '1rem' }}>
+    <div className={`theme-${theme} app-container`}>
+      <nav className="main-nav">
         <Link to="/settings" style={{ fontSize: '1.5rem' }}>⚙️</Link>
       </nav>
       <Routes>

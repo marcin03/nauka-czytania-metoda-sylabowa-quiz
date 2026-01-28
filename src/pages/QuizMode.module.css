@@ -1,0 +1,114 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100%;
+  width: 100%;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+.infoText {
+  font-size: 1rem;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.syllableDisplay {
+  width: 12rem;
+  height: 12rem;
+  background-color: var(--guide-bubble-bg);
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+  transition: background-color 0.3s;
+}
+
+.listenText {
+  font-size: 2.5rem;
+  color: var(--text-primary);
+}
+
+.listenButton {
+  padding: 0.8rem 1.5rem;
+  border-radius: 9999px;
+  color: #ffffff;
+  font-weight: bold;
+  font-size: 1.2rem;
+  transition: background-color 0.2s;
+  border: none;
+  cursor: pointer;
+}
+
+.listenButton:disabled {
+  background-color: #a0aec0;
+  cursor: not-allowed;
+}
+
+.listenButton:not(:disabled) {
+  background-color: #10b981;
+}
+
+.listenButton:not(:disabled):hover {
+  background-color: #059669;
+}
+
+.optionsContainer {
+  margin-top: 1rem;
+  display: flex;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.optionButton {
+  padding: 1rem 1.5rem;
+  border-radius: 0.5rem;
+  font-size: 1.8rem;
+  font-weight: bold;
+  transition: all 0.2s;
+  transform: scale(1);
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 1px 3px 0 rgba(0,0,0,0.1), 0 1px 2px 0 rgba(0,0,0,0.06);
+}
+
+.optionButton:disabled {
+    cursor: not-allowed;
+}
+
+.optionButtonCorrect {
+  background-color: #10b981; /* Green */
+  color: #ffffff;
+  box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1),0 4px 6px -2px rgba(0,0,0,0.05);
+}
+
+.optionButtonIncorrect {
+  background-color: #ef4444; /* Red */
+  color: #ffffff;
+  box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1),0 4px 6px -2px rgba(0,0,0,0.05);
+}
+
+.optionButtonDefault {
+  background-color: var(--guide-bubble-bg); /* White */
+  color: var(--button-secondary-hover-bg); /* Blue */
+}
+
+.feedbackMessage {
+  margin-top: 1rem;
+  font-size: 2.5rem;
+  font-weight: bold;
+  animation: bounce 1s infinite; /* Defined in SessionCompletionScreen.module.css */
+}
+
+.feedbackCorrect {
+  color: #16a34a; /* Green */
+}
+
+.feedbackIncorrect {
+  color: #dc2626; /* Red */
+}

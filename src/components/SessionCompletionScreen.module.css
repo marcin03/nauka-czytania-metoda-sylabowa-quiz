@@ -1,0 +1,97 @@
+.screen {
+  min-height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  background-color: var(--completion-screen-bg);
+  color: var(--completion-screen-text);
+  padding: 1rem;
+  box-sizing: border-box;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.title {
+  font-size: 1.875rem; /* 30px */
+  line-height: 2.25rem; /* 36px */
+  font-weight: 700;
+  margin-bottom: 1rem; /* 16px */
+  text-shadow: 0 2px 4px rgba(0,0,0,0.10);
+  flex-shrink: 0;
+  text-align: center;
+}
+
+.rewardDisplay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 1rem;
+  flex-shrink: 0;
+}
+
+.rewardImage {
+  width: 6rem; /* 96px */
+  height: 6rem; /* 96px */
+  object-fit: contain;
+  animation: bounce 1s infinite;
+}
+
+.rewardName {
+  font-size: 1.25rem; /* 20px */
+  line-height: 1.75rem; /* 28px */
+  font-weight: 600;
+  margin-top: 0.5rem; /* 8px */
+}
+
+.buttonsContainer {
+    display: flex;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.button {
+  padding: 0.75rem 1.5rem;
+  color: white;
+  font-weight: 700;
+  font-size: 1.25rem; /* 20px */
+  border-radius: 9999px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* shadow-lg */
+  transition: all 0.3s;
+  transform-origin: center;
+  flex-shrink: 0;
+  border: none;
+  cursor: pointer;
+  margin: 0.5rem;
+}
+
+.button:hover {
+    transform: scale(1.05);
+}
+
+.continueButton {
+  background-color: var(--button-primary-bg);
+}
+.continueButton:hover {
+    background-color: var(--button-primary-hover-bg);
+}
+
+.mainMenuButton {
+  background-color: var(--button-secondary-bg);
+}
+
+.mainMenuButton:hover {
+    background-color: var(--button-secondary-hover-bg);
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(-25%);
+    animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+  }
+  50% {
+    transform: translateY(0);
+    animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+  }
+}

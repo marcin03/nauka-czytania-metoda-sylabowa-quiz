@@ -6,6 +6,7 @@ import { useGamificationStore } from '../store/useGamificationStore'; // Import 
 import { ALL_SYLLABLES } from '../data/syllables'; // Import all syllables
 import SessionCompletionScreen from '../components/SessionCompletionScreen'; // Import SessionCompletionScreen
 import { Syllable, SessionCompletionDetails } from '../types';
+import styles from './LearningMode.module.css';
 
 const LearningMode = () => {
   const navigate = useNavigate();
@@ -27,10 +28,15 @@ const LearningMode = () => {
 
   const currentWorld = getWorldById(currentWorldId);
 
-  // Filter syllables for the current world
-  const currentSyllables: Syllable[] = currentWorld
-    ? ALL_SYLLABLES.filter((s) => currentWorld.syllableIds.includes(s.id))
+  // Filter syllables for the current world and selected consonants
+  const currentSyllables: Syllable[] = currentWorld && settings.selectedConsonants.length > 0
+    ? ALL_SYLLABLES.filter(
+        (s) =>
+          currentWorld.syllableIds.includes(s.id) &&
+          settings.selectedConsonants.includes(s.consonant)
+      )
     : [];
+
 
   const actualSyllablesInSession = Math.min(currentSyllables.length, sessionSyllableCount);
   const syllableToShow = currentSyllables[currentSyllableIndex];
@@ -103,47 +109,37 @@ const LearningMode = () => {
 
   if (!syllableToShow || !currentWorld) {
     return (
-      <div style={{ textAlign: 'center', fontSize: '2rem', fontWeight: 'bold', color: '#4a5568' }}>
+      <div className={styles.loadingText}>
         Ładowanie...
       </div>
     );
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 'calc(100vh - 4rem)', padding: '1rem' }}>
-      <p style={{ fontSize: '1.25rem', color: '#4a5568', marginBottom: '1rem' }}>
+    <div className={styles.container}>
+      <p className={styles.infoText}>
         Świat: {currentWorld.name} | Sesja {completedSessionsCount[currentWorldId] || 0 + 1} / {currentWorld.requiredSessionsToComplete}
       </p>
-      <p style={{ fontSize: '1.25rem', color: '#4a5568', marginBottom: '1rem' }}>
+      <p className={styles.infoText}>
         Sylab: {currentSyllableIndex + 1} / {actualSyllablesInSession}
       </p>
-      <div style={{ width: '16rem', height: '16rem', backgroundColor: '#ffffff', borderRadius: '0.75rem', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '2rem' }}>
+      <div className={styles.syllableDisplay}>
         {showSyllable ? (
-          <span style={{ fontSize: '5.625rem', fontWeight: 'bold', color: '#9333ea' /* Equivalent to purple-600 */, animation: 'fade-in 0.5s ease-out' }}>
+          <span className={styles.syllableText}>
             {syllableToShow.text}
           </span>
         ) : (
-          <span style={{ fontSize: '3.125rem', color: '#a0aec0' /* Equivalent to gray-400 */ }}>Słuchaj...</span>
+          <span className={styles.listenText}>Słuchaj...</span>
         )}
       </div>
       <button
         onClick={() => syllableToShow.audioUrl && playAudio(syllableToShow.audioUrl)}
         disabled={isPlaying || !syllableToShow.audioUrl}
-        style={{
-          padding: '1rem 2rem',
-          borderRadius: '9999px',
-          color: '#ffffff',
-          fontWeight: 'bold',
-          fontSize: '1.5rem',
-          transition: 'background-color 0.2s',
-          border: 'none',
-          cursor: 'pointer',
-          backgroundColor: isPlaying || !syllableToShow.audioUrl ? '#a0aec0' /* Equivalent to gray-400 */ : '#10b981' /* Equivalent to green-500 */,
-        }}
+        className={styles.listenButton}
       >
         Posłuchaj ponownie
       </button>
-      <p style={{ marginTop: '1rem', fontSize: '1.125rem', color: '#718096' }}>
+      <p className={styles.hintText}>
         Naciśnij spację, aby przejść dalej.
       </p>
     </div>

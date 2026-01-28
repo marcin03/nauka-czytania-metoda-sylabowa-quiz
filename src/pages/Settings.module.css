@@ -1,0 +1,76 @@
+.container {
+  text-align: center;
+  padding: 1rem;
+  width: 100%;
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: var(--button-secondary-hover-bg);
+  margin-bottom: 2rem;
+}
+
+.formContainer {
+  background-color: var(--guide-bubble-bg);
+  padding: 2rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  max-width: 28rem;
+  margin: 0 auto;
+}
+
+.field {
+  margin-bottom: 1.5rem;
+}
+
+.label {
+  display: block;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.input, .select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid var(--button-secondary-bg);
+  border-radius: 0.5rem;
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--button-secondary-hover-bg);
+  outline: none;
+  background-color: transparent;
+}
+
+.select {
+  text-align: left; /* Keep select dropdown text aligned left */
+  cursor: pointer;
+}
+
+
+.info {
+  color: #a0aec0;
+  font-size: 0.875rem;
+  margin-top: 1rem;
+}
+
+.saveButton {
+  margin-top: 2rem;
+  padding: 1rem 2rem;
+  background-color: #10b981;
+  color: #ffffff;
+  font-weight: bold;
+  border-radius: 0.5rem;
+  font-size: 1.5rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  transition: background-color 0.2s;
+  border: none;
+  cursor: pointer;
+}
+
+.saveButton:hover {
+    background-color: #059669;
+}

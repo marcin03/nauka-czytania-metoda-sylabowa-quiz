@@ -1,0 +1,122 @@
+.container {
+  text-align: center;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: var(--button-primary-bg);
+  margin-bottom: 1rem;
+  flex-shrink: 0;
+}
+
+.worldsButton {
+  margin-bottom: 1rem;
+  flex-shrink: 0;
+}
+
+.consonantsContainer {
+  margin-bottom: 1rem;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+  max-width: 90%;
+}
+
+.consonantsTitle {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 0.8rem;
+  color: var(--button-secondary-hover-bg);
+  flex-shrink: 0;
+}
+
+.consonantsGrid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.8rem;
+  overflow-y: auto;
+  max-height: 100%;
+}
+
+.consonantButton {
+  padding: 0.8rem 1.2rem;
+  border-radius: 0.5rem;
+  font-size: 1.2rem;
+  font-weight: bold;
+  transition: transform 0.2s, background-color 0.2s, color 0.2s;
+  border: none;
+  cursor: pointer;
+}
+
+.consonantButtonSelected {
+  transform: scale(1.1);
+  background-color: #4ade80; /* This could be a theme variable if needed */
+  color: white;
+  box-shadow: none;
+}
+
+.consonantButtonUnselected {
+  transform: scale(1);
+  background-color: var(--guide-bubble-bg);
+  color: var(--text-primary);
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+.gameButtonsContainer {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.gameButton {
+  padding: 0.8rem 1.5rem;
+  color: #ffffff;
+  font-weight: bold;
+  border-radius: 0.5rem;
+  font-size: 1.5rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  transition: background-color 0.2s;
+  border: none;
+  cursor: pointer;
+}
+
+.gameButton:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+}
+
+.learnButton {
+  background-color: var(--button-secondary-bg);
+}
+.learnButton:hover:not(:disabled) {
+  background-color: var(--button-secondary-hover-bg);
+}
+
+.quizButton {
+  background-color: var(--button-primary-bg);
+}
+.quizButton:hover:not(:disabled) {
+  background-color: var(--button-primary-hover-bg);
+}
+
+.worldsNavButton {
+  background-color: #60a5fa; /* A different color for distinction */
+}
+.worldsNavButton:hover {
+  background-color: #3b82f6;
+}

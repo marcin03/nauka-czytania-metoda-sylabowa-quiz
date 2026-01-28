@@ -1,0 +1,105 @@
+.container {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.title {
+  font-size: 1.5rem; /* text-2xl */
+  font-weight: bold;
+  margin-bottom: 1rem; /* mb-4 */
+  text-align: center;
+  flex-shrink: 0;
+  color: var(--text-primary); /* Use theme variable */
+}
+
+.worldsGrid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  flex-grow: 1;
+  width: 100%;
+  max-width: 90%;
+  padding: 0.5rem;
+}
+
+.worldCard {
+  width: min(100%, 120px);
+  flex-shrink: 0;
+  background-color: var(--guide-bubble-bg); /* bg-white */
+  border-radius: 0.5rem; /* rounded-lg */
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* shadow-md */
+  padding: 0.5rem; /* p-2 */
+  text-align: center;
+  cursor: pointer;
+  transition: opacity 0.3s, border 0.3s, box-shadow 0.3s;
+  color: var(--text-primary);
+}
+
+.worldCard:not(.unlocked) {
+  opacity: 0.5;
+  pointer-events: none;
+  box-shadow: none;
+}
+
+.worldCard.active {
+  border: 2px solid var(--button-secondary-bg); /* blue */
+}
+
+.worldImage {
+  width: 100%;
+  height: 80px;
+  object-fit: contain;
+  margin-bottom: 0.5rem;
+}
+
+.worldName {
+  font-size: 1rem; /* text-base */
+  font-weight: 600;
+  margin-bottom: 0.25rem; /* mb-1 */
+}
+
+.worldDescription {
+  color: var(--text-primary); /* text-gray-600 */
+  font-size: 0.75rem; /* text-xs */
+}
+
+.lockedText {
+  margin-top: 0.25rem; /* mt-1 */
+  color: #ef4444; /* text-red-500 */
+  font-weight: bold;
+  font-size: 0.75rem; /* text-xs */
+}
+
+.activeText {
+  margin-top: 0.25rem; /* mt-1 */
+  color: var(--button-secondary-hover-bg); /* text-blue-700 */
+  font-weight: bold;
+  font-size: 0.75rem; /* text-xs */
+}
+
+.rewardsButton {
+  margin-top: 1rem; /* mt-4 */
+  padding: 0.75rem 1rem; /* px-4 py-2 */
+  background-color: var(--button-secondary-bg); /* bg-purple-500 (mapped to secondary) */
+  color: #ffffff;
+  font-weight: bold;
+  border-radius: 9999px; /* rounded-full */
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* shadow-lg */
+  transition: background-color 0.3s, transform 0.3s;
+  font-size: 1.125rem; /* text-lg */
+  flex-shrink: 0;
+  border: none;
+  cursor: pointer;
+}
+
+.rewardsButton:hover {
+  background-color: var(--button-secondary-hover-bg); /* hover:bg-purple-600 */
+  transform: scale(1.05);
+}

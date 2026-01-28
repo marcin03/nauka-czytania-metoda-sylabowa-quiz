@@ -1,0 +1,89 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100%;
+  width: 100%;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+.infoText {
+  font-size: 1rem;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.syllableDisplay {
+  width: 12rem;
+  height: 12rem;
+  background-color: var(--guide-bubble-bg);
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+  transition: background-color 0.3s;
+}
+
+.syllableText {
+  font-size: 4rem;
+  font-weight: bold;
+  color: var(--button-secondary-hover-bg); /* purple-600 */
+  animation: fade-in 0.5s ease-out;
+}
+
+.listenText {
+  font-size: 2.5rem;
+  color: var(--text-primary); /* gray-400 */
+}
+
+.listenButton {
+  padding: 0.8rem 1.5rem;
+  border-radius: 9999px;
+  color: #ffffff;
+  font-weight: bold;
+  font-size: 1.2rem;
+  transition: background-color 0.2s;
+  border: none;
+  cursor: pointer;
+}
+
+.listenButton:disabled {
+  background-color: #a0aec0; /* gray-400 */
+  cursor: not-allowed;
+}
+
+.listenButton:not(:disabled) {
+  background-color: #10b981; /* green-500 */
+}
+
+.listenButton:not(:disabled):hover {
+  background-color: #059669; /* green-600 */
+}
+
+.hintText {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--text-primary); /* gray-600 */
+}
+
+.loadingText {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: bold;
+  color: var(--text-primary); /* gray-600 */
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

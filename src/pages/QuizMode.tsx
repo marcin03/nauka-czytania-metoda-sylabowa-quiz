@@ -5,10 +5,11 @@ import { useAudioPlayer } from '../hooks/useAudioPlayer';
 import type { Syllable, SessionCompletionDetails } from '../types';
 import { ALL_SYLLABLES } from '../data/syllables'; // Import all syllables
 import { useGamificationStore } from '../store/useGamificationStore'; // Import gamification store
+import styles from './QuizMode.module.css';
 
 const QuizMode = () => {
   const navigate = useNavigate();
-  const { gameMode, increaseScore } = useGameStore(); // Keep gameMode and increaseScore from useGameStore
+  const { gameMode, increaseScore, settings } = useGameStore(); // Keep gameMode, increaseScore, and settings from useGameStore
   const { playAudio, isPlaying } = useAudioPlayer();
 
   const {
@@ -29,10 +30,15 @@ const QuizMode = () => {
 
   const currentWorld = getWorldById(currentWorldId);
 
-  // Filter syllables for the current world
-  const worldSyllables: Syllable[] = currentWorld
-    ? ALL_SYLLABLES.filter((s) => currentWorld.syllableIds.includes(s.id))
+  // Filter syllables for the current world and selected consonants
+  const worldSyllables: Syllable[] = currentWorld && settings.selectedConsonants.length > 0
+    ? ALL_SYLLABLES.filter(
+        (s) =>
+          currentWorld.syllableIds.includes(s.id) &&
+          settings.selectedConsonants.includes(s.consonant)
+      )
     : [];
+
 
   const actualSyllablesInSession = Math.min(worldSyllables.length, sessionSyllableCount);
   const currentSyllable = worldSyllables[currentSyllableIndex];
@@ -83,6 +89,7 @@ const QuizMode = () => {
     actualSyllablesInSession,
     isSessionComplete,
     sessionCompletionDetails,
+    settings.selectedConsonants // Added settings.selectedConsonants to dependencies
   ]);
 
   const handleAnswer = (selectedSyllable: Syllable) => {
@@ -111,71 +118,46 @@ const QuizMode = () => {
 
   if (!currentSyllable || !currentWorld) {
     return (
-      <div style={{ textAlign: 'center', fontSize: '2rem', fontWeight: 'bold', color: '#4a5568' }}>
-        Ładowanie...
+      <div className={styles.container}>
+        <div className={styles.loadingText}>
+          Ładowanie...
+        </div>
       </div>
     );
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 'calc(100vh - 4rem)', padding: '1rem' }}>
-      <p style={{ fontSize: '1.25rem', color: '#4a5568', marginBottom: '1rem' }}>
+    <div className={styles.container}>
+      <p className={styles.infoText}>
         Świat: {currentWorld.name} | Sesja {completedSessionsCount[currentWorldId] || 0 + 1} / {currentWorld.requiredSessionsToComplete}
       </p>
-      <p style={{ fontSize: '1.25rem', color: '#4a5568', marginBottom: '1rem' }}>
+      <p className={styles.infoText}>
         Pytanie: {currentSyllableIndex + 1} / {actualSyllablesInSession}
       </p>
-      <div style={{ width: '16rem', height: '16rem', backgroundColor: '#ffffff', borderRadius: '0.75rem', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '2rem' }}>
-        <span style={{ fontSize: '3.125rem', color: '#a0aec0' /* Equivalent to gray-400 */ }}>Słuchaj...</span>
+      <div className={styles.syllableDisplay}>
+        <span className={styles.listenText}>Słuchaj...</span>
       </div>
       <button
         onClick={() => currentSyllable.audioUrl && playAudio(currentSyllable.audioUrl)}
         disabled={isPlaying || !currentSyllable.audioUrl || !!feedback}
-        style={{
-          padding: '1rem 2rem',
-          borderRadius: '9999px',
-          color: '#ffffff',
-          fontWeight: 'bold',
-          fontSize: '1.5rem',
-          transition: 'background-color 0.2s',
-          border: 'none',
-          cursor: 'pointer',
-          backgroundColor: isPlaying || !currentSyllable.audioUrl || !!feedback ? '#a0aec0' /* Equivalent to gray-400 */ : '#10b981' /* Equivalent to green-500 */,
-        }}
+        className={styles.listenButton}
       >
         Posłuchaj
       </button>
 
-      <div style={{ marginTop: '2rem', display: 'flex', gap: '1rem' }}>
+      <div className={styles.optionsContainer}>
         {options.map((option) => (
           <button
             key={option.id}
             onClick={() => handleAnswer(option)}
             disabled={!!feedback}
-            style={{
-              padding: '1.5rem 2rem',
-              borderRadius: '0.5rem',
-              fontSize: '2.25rem',
-              fontWeight: 'bold',
-              transition: 'all 0.2s',
-              transform: 'scale(1)',
-              border: 'none',
-              cursor: 'pointer',
-              backgroundColor:
-                feedback === 'correct' && selectedAnswer?.id === option.id
-                  ? '#10b981' /* Green */
-                  : feedback === 'incorrect' && selectedAnswer?.id === option.id
-                  ? '#ef4444' /* Red */
-                  : '#ffffff', /* White */
-              color:
-                feedback && selectedAnswer?.id === option.id
-                  ? '#ffffff'
-                  : '#2563eb', /* Blue */
-              boxShadow:
-                feedback && selectedAnswer?.id === option.id
-                  ? '0 10px 15px -3px rgba(0,0,0,0.1),0 4px 6px -2px rgba(0,0,0,0.05)'
-                  : '0 1px 3px 0 rgba(0,0,0,0.1),0 1px 2px 0 rgba(0,0,0,0.06)',
-            }}
+            className={`${styles.optionButton} ${
+              feedback === 'correct' && selectedAnswer?.id === option.id
+                ? styles.optionButtonCorrect
+                : feedback === 'incorrect' && selectedAnswer?.id === option.id
+                ? styles.optionButtonIncorrect
+                : styles.optionButtonDefault
+            }`}
           >
             {option.text}
           </button>
@@ -183,13 +165,9 @@ const QuizMode = () => {
       </div>
       {feedback && (
         <div
-          style={{
-            marginTop: '1.5rem',
-            fontSize: '3.125rem',
-            fontWeight: 'bold',
-            animation: 'bounce 1s infinite', // Note: CSS animation needs to be defined
-            color: feedback === 'correct' ? '#16a34a' /* Green */ : '#dc2626' /* Red */,
-          }}
+          className={`${styles.feedbackMessage} ${
+            feedback === 'correct' ? styles.feedbackCorrect : styles.feedbackIncorrect
+          }`}
         >
           {feedback === 'correct' ? 'Dobrze!' : 'Źle!'}
         </div>

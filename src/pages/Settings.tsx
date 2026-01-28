@@ -1,9 +1,18 @@
 import useGameStore from '../store/useGameStore';
 import { useNavigate } from 'react-router-dom';
+import { useThemeStore, Theme } from '../store/useThemeStore';
+import styles from './Settings.module.css';
+
+const themeLabels: Record<Theme, string> = {
+  forest: 'Leśna',
+  space: 'Kosmiczna',
+  castle: 'Zamkowa',
+};
 
 const Settings = () => {
   const navigate = useNavigate();
   const { settings, setSettings } = useGameStore();
+  const { theme, setTheme } = useThemeStore();
 
   const handleSyllablesPerSessionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let value = Number(e.target.value);
@@ -19,13 +28,30 @@ const Settings = () => {
     setSettings({ learningModeDelay: value });
   };
 
-  return (
-    <div style={{ textAlign: 'center', padding: '1rem' }}>
-      <h1 style={{ fontSize: '2.5rem', fontWeight: 'bold', color: '#1d4ed8', marginBottom: '2rem' }}>Ustawienia</h1>
+  const handleThemeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setTheme(e.target.value as Theme);
+  };
 
-      <div style={{ backgroundColor: '#ffffff', padding: '2rem', borderRadius: '0.5rem', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)', maxWidth: '28rem', margin: '0 auto' }}>
-        <div style={{ marginBottom: '1.5rem' }}>
-          <label htmlFor="syllablesPerSession" style={{ display: 'block', fontSize: '1.25rem', fontWeight: 'semibold', color: '#4a5568', marginBottom: '0.5rem' }}>
+  return (
+    <div className={styles.container}>
+      <h1 className={styles.title}>Ustawienia</h1>
+
+      <div className={styles.formContainer}>
+        <div className={styles.field}>
+          <label htmlFor="theme" className={styles.label}>
+            Szata graficzna:
+          </label>
+          <select id="theme" value={theme} onChange={handleThemeChange} className={styles.select}>
+            {Object.entries(themeLabels).map(([themeKey, themeLabel]) => (
+              <option key={themeKey} value={themeKey}>
+                {themeLabel}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className={styles.field}>
+          <label htmlFor="syllablesPerSession" className={styles.label}>
             Liczba sylab na sesję (2-20):
           </label>
           <input
@@ -35,12 +61,12 @@ const Settings = () => {
             max="20"
             value={settings.syllablesPerSession}
             onChange={handleSyllablesPerSessionChange}
-            style={{ width: '100%', padding: '0.75rem', border: '2px solid #90cdf4', borderRadius: '0.5rem', textAlign: 'center', fontSize: '1.5rem', fontWeight: 'bold', color: '#2b6cb0', outline: 'none' }}
+            className={styles.input}
           />
         </div>
 
-        <div style={{ marginBottom: '1.5rem' }}>
-          <label htmlFor="learningModeDelay" style={{ display: 'block', fontSize: '1.25rem', fontWeight: 'semibold', color: '#4a5568', marginBottom: '0.5rem' }}>
+        <div className={styles.field}>
+          <label htmlFor="learningModeDelay" className={styles.label}>
             Opóźnienie w trybie nauki (1-9s):
           </label>
           <input
@@ -50,31 +76,15 @@ const Settings = () => {
             max="9"
             value={settings.learningModeDelay}
             onChange={handleLearningModeDelayChange}
-            style={{ width: '100%', padding: '0.75rem', border: '2px solid #90cdf4', borderRadius: '0.5rem', textAlign: 'center', fontSize: '1.5rem', fontWeight: 'bold', color: '#2b6cb0', outline: 'none' }}
+            className={styles.input}
           />
         </div>
 
-        {/* TODO: Add difficulty levels / levels of progression here later */}
-        <p style={{ color: '#a0aec0', fontSize: '0.875rem', marginTop: '1rem' }}>
+        <p className={styles.info}>
           Poziomy trudności i progresja będą dodane w przyszłości.
         </p>
 
-        <button
-          onClick={() => navigate('/')}
-          style={{
-            marginTop: '2rem',
-            padding: '1rem 2rem',
-            backgroundColor: '#10b981',
-            color: '#ffffff',
-            fontWeight: 'bold',
-            borderRadius: '0.5rem',
-            fontSize: '1.5rem',
-            boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
-            transition: 'background-color 0.2s',
-            border: 'none',
-            cursor: 'pointer',
-          }}
-        >
+        <button onClick={() => navigate('/')} className={styles.saveButton}>
           Zapisz i wróć
         </button>
       </div>
@@ -83,3 +93,4 @@ const Settings = () => {
 };
 
 export default Settings;
+

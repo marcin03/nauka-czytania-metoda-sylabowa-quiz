@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { SessionCompletionDetails } from '../types';
 import { useGamificationStore } from '../store/useGamificationStore';
 import GuideCharacter from './GuideCharacter'; // Assuming GuideCharacter is in the same components folder
+import styles from './SessionCompletionScreen.module.css';
 
 interface SessionCompletionScreenProps {
   details: SessionCompletionDetails;
@@ -43,28 +44,36 @@ const SessionCompletionScreen: React.FC<SessionCompletionScreenProps> = ({ detai
   };
 
   return (
-    <div className="session-completion-screen flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-green-300 to-blue-400 p-4">
-      <h1 className="text-4xl font-bold text-white mb-6 text-shadow-lg">Gratulacje!</h1>
+    <div className={styles.screen}>
+      <h1 className={styles.title}>Gratulacje!</h1>
 
       <GuideCharacter message={celebrationMessage} />
 
       {earnedReward && (
-        <div className="reward-display flex flex-col items-center mt-8">
+        <div className={styles.rewardDisplay}>
           <img
             src={earnedReward.image}
             alt={earnedReward.name}
-            className="w-40 h-40 object-contain animate-bounce"
+            className={styles.rewardImage}
           />
-          <p className="text-2xl font-semibold text-white mt-4">{earnedReward.name}</p>
+          <p className={styles.rewardName}>{earnedReward.name}</p>
         </div>
       )}
 
-      <button
-        onClick={handleContinue}
-        className="mt-12 px-8 py-4 bg-yellow-400 text-white font-bold text-2xl rounded-full shadow-lg hover:bg-yellow-500 transition-all duration-300 transform hover:scale-105"
-      >
-        Kontynuuj
-      </button>
+      <div className={styles.buttonsContainer}>
+        <button
+          onClick={handleContinue}
+          className={`${styles.button} ${styles.continueButton}`}
+        >
+          Kontynuuj
+        </button>
+        <button
+          onClick={() => navigate('/')}
+          className={`${styles.button} ${styles.mainMenuButton}`}
+        >
+          Menu główne
+        </button>
+      </div>
     </div>
   );
 };
