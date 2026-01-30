@@ -1,10 +1,11 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import useGameStore from '../store/useGameStore'; // Still needed for gameMode, increaseScore
 import { useNavigate } from 'react-router-dom';
 import { useAudioPlayer } from '../hooks/useAudioPlayer';
 import type { Syllable, SessionCompletionDetails } from '../types';
 import { ALL_SYLLABLES } from '../data/syllables'; // Import all syllables
 import { useGamificationStore } from '../store/useGamificationStore'; // Import gamification store
+import { shuffleArray } from '../shared/utils';
 import styles from './QuizMode.module.css';
 
 const QuizMode = () => {
@@ -26,22 +27,30 @@ const QuizMode = () => {
   const [selectedAnswer, setSelectedAnswer] = useState<Syllable | null>(null);
   const [isSessionComplete, setIsSessionComplete] = useState(false);
   const [sessionCompletionDetails, setSessionCompletionDetails] = useState<SessionCompletionDetails | null>(null);
-
+  const [shuffledSyllables, setShuffledSyllables] = useState<Syllable[]>([]);
 
   const currentWorld = getWorldById(currentWorldId);
 
   // Filter syllables for the current world and selected consonants
-  const worldSyllables: Syllable[] = currentWorld && settings.selectedConsonants.length > 0
-    ? ALL_SYLLABLES.filter(
+  const filteredSyllables = useMemo(() => {
+    if (currentWorld && settings.selectedConsonants.length > 0) {
+      return ALL_SYLLABLES.filter(
         (s) =>
-          currentWorld.syllableIds.includes(s.id) &&
+          // currentWorld.syllableIds.includes(s.id) && // commented tu filter by settings - not by world
           settings.selectedConsonants.includes(s.consonant)
-      )
-    : [];
+      );
+    }
+    return [];
+  }, [currentWorld, settings.selectedConsonants]);
 
+  useEffect(() => {
+    if (filteredSyllables.length > 0) {
+      setShuffledSyllables(shuffleArray([...filteredSyllables]));
+    }
+  }, [filteredSyllables]);
 
-  const actualSyllablesInSession = Math.min(worldSyllables.length, sessionSyllableCount);
-  const currentSyllable = worldSyllables[currentSyllableIndex];
+  const actualSyllablesInSession = Math.min(shuffledSyllables.length, sessionSyllableCount);
+  const currentSyllable = shuffledSyllables[currentSyllableIndex];
 
 
   const generateOptions = useCallback((correctSyllable: Syllable) => {
@@ -60,7 +69,7 @@ const QuizMode = () => {
   }, []);
 
   useEffect(() => {
-    if (gameMode !== 'quiz' || !currentWorld || actualSyllablesInSession === 0) {
+    if (gameMode !== 'quiz' || !currentWorld) {
       navigate('/'); // Redirect if not in quiz mode or no current world/syllables
       return;
     }
@@ -80,16 +89,14 @@ const QuizMode = () => {
     }
   }, [
     currentSyllable,
-    currentSyllableIndex,
     gameMode,
     navigate,
     playAudio,
     generateOptions,
     currentWorld,
-    actualSyllablesInSession,
     isSessionComplete,
     sessionCompletionDetails,
-    settings.selectedConsonants // Added settings.selectedConsonants to dependencies
+    shuffledSyllables,
   ]);
 
   const handleAnswer = (selectedSyllable: Syllable) => {

@@ -1,11 +1,11 @@
-import { useEffect, useCallback, useState } from 'react';
+import { useEffect, useCallback, useState, useMemo } from 'react';
 import useGameStore from '../store/useGameStore'; // Still needed for gameMode, settings
 import { useNavigate } from 'react-router-dom';
 import { useAudioPlayer } from '../hooks/useAudioPlayer';
 import { useGamificationStore } from '../store/useGamificationStore'; // Import gamification store
 import { ALL_SYLLABLES } from '../data/syllables'; // Import all syllables
-import SessionCompletionScreen from '../components/SessionCompletionScreen'; // Import SessionCompletionScreen
 import { Syllable, SessionCompletionDetails } from '../types';
+import { shuffleArray } from '../shared/utils';
 import styles from './LearningMode.module.css';
 
 const LearningMode = () => {
@@ -25,21 +25,32 @@ const LearningMode = () => {
   const [showSyllable, setShowSyllable] = useState(false);
   const [isSessionComplete, setIsSessionComplete] = useState(false);
   const [sessionCompletionDetails, setSessionCompletionDetails] = useState<SessionCompletionDetails | null>(null);
+  const [shuffledSyllables, setShuffledSyllables] = useState<Syllable[]>([]);
 
   const currentWorld = getWorldById(currentWorldId);
 
   // Filter syllables for the current world and selected consonants
-  const currentSyllables: Syllable[] = currentWorld && settings.selectedConsonants.length > 0
-    ? ALL_SYLLABLES.filter(
+  const filteredSyllables = useMemo(() => {
+    if (currentWorld && settings.selectedConsonants.length > 0) {
+      return ALL_SYLLABLES.filter(
         (s) =>
-          currentWorld.syllableIds.includes(s.id) &&
+          // currentWorld.syllableIds.includes(s.id) && - //commented to filter syllables only by settings
           settings.selectedConsonants.includes(s.consonant)
-      )
-    : [];
+      );
+      
+    }
+    return [];
+  }, [currentWorld, settings.selectedConsonants]);
+  console.log('filteredSyllables', filteredSyllables)
+  // Shuffle syllables only once when the component mounts or filteredSyllables changes
+  useEffect(() => {
+    if (filteredSyllables.length > 0) {
+      setShuffledSyllables(shuffleArray([...filteredSyllables]));
+    }
+  }, [filteredSyllables]);
 
-
-  const actualSyllablesInSession = Math.min(currentSyllables.length, sessionSyllableCount);
-  const syllableToShow = currentSyllables[currentSyllableIndex];
+  const actualSyllablesInSession = Math.min(shuffledSyllables.length, sessionSyllableCount);
+  const syllableToShow = shuffledSyllables[currentSyllableIndex];
 
   const handleNext = useCallback(() => {
     if (currentSyllableIndex < actualSyllablesInSession - 1) {
@@ -55,7 +66,7 @@ const LearningMode = () => {
   }, [currentSyllableIndex, actualSyllablesInSession, currentWorldId, completeSession]);
 
   useEffect(() => {
-    if (gameMode !== 'learning' || !currentWorld || actualSyllablesInSession === 0) {
+    if (gameMode !== 'learning' || !currentWorld) {
       navigate('/'); // Redirect if not in learning mode or no current world/syllables
       return;
     }
@@ -64,6 +75,11 @@ const LearningMode = () => {
         // Navigate to a temporary route to render SessionCompletionScreen
         navigate('/session-complete', { state: { details: sessionCompletionDetails } });
         return;
+    }
+
+    // if syllableToShow is not ready, don't do anything
+    if (!syllableToShow) {
+      return;
     }
 
     const playAndShow = async () => {
@@ -95,16 +111,15 @@ const LearningMode = () => {
     };
   }, [
     currentSyllableIndex,
-    actualSyllablesInSession,
     gameMode,
     navigate,
     playAudio,
     handleNext,
     settings.learningModeDelay,
     currentWorld,
-    syllableToShow,
     isSessionComplete,
     sessionCompletionDetails,
+    shuffledSyllables, // Use shuffledSyllables as a dependency
   ]);
 
   if (!syllableToShow || !currentWorld) {
