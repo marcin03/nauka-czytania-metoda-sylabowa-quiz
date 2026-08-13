@@ -125,9 +125,7 @@ const QuizMode = () => {
       generateOptions(currentSyllable);
       setFeedback(null);
       setSelectedAnswer(null);
-      if (currentSyllable.audioUrl) {
-        playAudio(currentSyllable.audioUrl);
-      }
+      playAudio(currentSyllable.audioUrl, currentSyllable.text);
     }
   }, [
     currentSyllable,
@@ -189,8 +187,8 @@ const QuizMode = () => {
         <span className={styles.listenText}>Słuchaj...</span>
       </div>
       <button
-        onClick={() => currentSyllable.audioUrl && playAudio(currentSyllable.audioUrl)}
-        disabled={isPlaying || !currentSyllable.audioUrl || !!feedback}
+        onClick={() => playAudio(currentSyllable.audioUrl, currentSyllable.text)}
+        disabled={isPlaying || !!feedback}
         className={styles.listenButton}
       >
         Posłuchaj

@@ -83,11 +83,8 @@ const LearningMode = () => {
     }
 
     const playAndShow = async () => {
-      if (syllableToShow && syllableToShow.audioUrl) {
-        await playAudio(syllableToShow.audioUrl);
-        setShowSyllable(true);
-      } else if (syllableToShow) {
-        // If no audioUrl, just show the syllable
+      if (syllableToShow) {
+        await playAudio(syllableToShow.audioUrl, syllableToShow.text);
         setShowSyllable(true);
       }
     };
@@ -148,8 +145,8 @@ const LearningMode = () => {
         )}
       </div>
       <button
-        onClick={() => syllableToShow.audioUrl && playAudio(syllableToShow.audioUrl)}
-        disabled={isPlaying || !syllableToShow.audioUrl}
+        onClick={() => playAudio(syllableToShow.audioUrl, syllableToShow.text)}
+        disabled={isPlaying}
         className={styles.listenButton}
       >
         Posłuchaj ponownie
