@@ -25,29 +25,18 @@ const LearningMode = () => {
   const [showSyllable, setShowSyllable] = useState(false);
   const [isSessionComplete, setIsSessionComplete] = useState(false);
   const [sessionCompletionDetails, setSessionCompletionDetails] = useState<SessionCompletionDetails | null>(null);
-  const [shuffledSyllables, setShuffledSyllables] = useState<Syllable[]>([]);
-
   const currentWorld = getWorldById(currentWorldId);
 
-  // Filter syllables for the current world and selected consonants
-  const filteredSyllables = useMemo(() => {
+  // Filter and shuffle syllables for the current world and selected consonants
+  const shuffledSyllables = useMemo(() => {
     if (currentWorld && settings.selectedConsonants.length > 0) {
-      return ALL_SYLLABLES.filter(
-        (s) =>
-          // currentWorld.syllableIds.includes(s.id) && - //commented to filter syllables only by settings
-          settings.selectedConsonants.includes(s.consonant)
+      const filtered = ALL_SYLLABLES.filter((s) =>
+        settings.selectedConsonants.includes(s.consonant)
       );
-      
+      return shuffleArray([...filtered]);
     }
     return [];
   }, [currentWorld, settings.selectedConsonants]);
-  console.log('filteredSyllables', filteredSyllables)
-  // Shuffle syllables only once when the component mounts or filteredSyllables changes
-  useEffect(() => {
-    if (filteredSyllables.length > 0) {
-      setShuffledSyllables(shuffleArray([...filteredSyllables]));
-    }
-  }, [filteredSyllables]);
 
   const actualSyllablesInSession = Math.min(shuffledSyllables.length, sessionSyllableCount);
   const syllableToShow = shuffledSyllables[currentSyllableIndex];
