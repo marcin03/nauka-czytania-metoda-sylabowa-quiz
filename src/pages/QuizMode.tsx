@@ -45,15 +45,66 @@ const QuizMode = () => {
 
 
   const generateOptions = useCallback((correctSyllable: Syllable) => {
-    // Generate incorrect options from ALL_SYLLABLES, but make sure they are not the correct answer
-    // and ideally have a different consonant to avoid confusion for this quiz mode.
-    // TODO: For progression, introduce similar-consonant incorrect options.
-    const incorrectSyllables = ALL_SYLLABLES.filter(
-      (s) => s.id !== correctSyllable.id // Must not be the correct syllable
+    // Helper to extract a vowel from syllable text
+    const getVowel = (text: string): string => {
+      const vowels = ['A', 'E', 'I', 'O', 'U', 'Y'];
+      for (const v of vowels) {
+        if (text.endsWith(v)) return v;
+      }
+      return '';
+    };
+
+    const correctVowel = getVowel(correctSyllable.text);
+
+    // Option 1: Same vowel, different consonant (e.g. for "BA" -> "MA", "PA")
+    const sameVowelDiffConsonant = ALL_SYLLABLES.filter(
+      (s) => s.id !== correctSyllable.id &&
+             s.consonant !== correctSyllable.consonant &&
+             (correctVowel ? getVowel(s.text) === correctVowel : false)
     );
 
-    const shuffledIncorrect = incorrectSyllables.sort(() => 0.5 - Math.random());
-    const selectedOptions = shuffledIncorrect.slice(0, 2); // Get 2 incorrect options
+    // Option 2: Same consonant, different vowel (e.g. for "BA" -> "BO", "BU")
+    const sameConsonantDiffVowel = ALL_SYLLABLES.filter(
+      (s) => s.id !== correctSyllable.id &&
+             s.consonant === correctSyllable.consonant &&
+             (correctVowel ? getVowel(s.text) !== correctVowel : true)
+    );
+
+    let option1: Syllable | null = null;
+    let option2: Syllable | null = null;
+
+    if (sameVowelDiffConsonant.length > 0) {
+      option1 = sameVowelDiffConsonant[Math.floor(Math.random() * sameVowelDiffConsonant.length)];
+    }
+
+    if (sameConsonantDiffVowel.length > 0) {
+      option2 = sameConsonantDiffVowel[Math.floor(Math.random() * sameConsonantDiffVowel.length)];
+    }
+
+    // Prepare fallback pool in case specific options could not be found
+    const usedIds = new Set<number>([correctSyllable.id]);
+    if (option1) usedIds.add(option1.id);
+    if (option2) usedIds.add(option2.id);
+
+    const remainingIncorrect = ALL_SYLLABLES.filter((s) => !usedIds.has(s.id));
+    const shuffledRemaining = [...remainingIncorrect].sort(() => 0.5 - Math.random());
+
+    if (!option1) {
+      option1 = shuffledRemaining.pop() || null;
+    }
+    if (!option2) {
+      option2 = shuffledRemaining.pop() || null;
+    }
+
+    const selectedOptions: Syllable[] = [];
+    if (option1) selectedOptions.push(option1);
+    if (option2) selectedOptions.push(option2);
+
+    // Fallback: fill to 2 options if we don't have enough
+    while (selectedOptions.length < 2 && shuffledRemaining.length > 0) {
+      const extraOpt = shuffledRemaining.pop();
+      if (extraOpt) selectedOptions.push(extraOpt);
+    }
 
     const allOptions = [...selectedOptions, correctSyllable];
     setOptions(allOptions.sort(() => 0.5 - Math.random())); // Shuffle all options
